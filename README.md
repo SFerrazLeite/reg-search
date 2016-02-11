@@ -1,5 +1,5 @@
-Regex Search++
-===============
+Reg Search
+==========
 
 This is a chrome extension based on the open source extension
 [regex-search](https://github.com/gsingh93/regex-search). The original extension
