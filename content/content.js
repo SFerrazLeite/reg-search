@@ -1,14 +1,32 @@
-var documentJsonField = document.createElement('input');
-documentJsonField.style.visibility = "hidden";
-document.body.appendChild(documentJsonField);
-var jsonMatches = [];
-
 var Content;
 (function (Content) {
+    var jsonMatches = [];
     var marks = [];
     var cur = 0;
 
     chrome.runtime.sendMessage({ event: "loaded" });
+
+    var JsonStoreField = (function() {
+      function JsonStoreField() {
+        this.jsonField = document.createElement('textarea');
+        this.jsonField.style.display = "none";
+        document.getElementsByTagName('body')[0].appendChild(this.jsonField);
+
+      }
+
+      JsonStoreField.prototype.setJson = function(text) {
+        this.jsonField.innerHTML = text;
+      }
+
+      JsonStoreField.prototype.copyJsonToClipboard = function() {
+        this.jsonField.style.display = "block";
+        this.jsonField.select();
+        document.execCommand('copy');
+        this.jsonField.style.display = "none";
+      }
+      return JsonStoreField;
+    })();
+    var jsonStoreField = new JsonStoreField();
 
     var InfoSpan = (function () {
         function InfoSpan() {
@@ -38,6 +56,7 @@ var Content;
                 document.getElementsByTagName('body')[0].appendChild(this.span);
             }
         };
+
         return InfoSpan;
     })();
 
@@ -150,7 +169,7 @@ var Content;
                 }
                 var after = document.createTextNode(str.substring(pos));
                 parent.insertBefore(after, mark.nextSibling);
-                documentJsonField.value = JSON.stringify(jsonMatches);
+                jsonStoreField.setJson(JSON.stringify(jsonMatches));
             }
         }
     }
@@ -189,6 +208,9 @@ var Content;
                 prevMatch();
             }
             marks[cur].className = "__regexp_search_selected";
+            if (!elementInViewport(marks[cur])) {
+                $('body').scrollTop($(marks[cur]).offset().top - 20);
+            }
             infoSpan.setText((cur + 1) + " of " + marks.length + " matches.");
         }
     }
@@ -207,11 +229,7 @@ var Content;
 
 
     function copyToClipboard() {
-        documentJsonField.style.visibility = "visible";
-        documentJsonField.focus();
-        document.execCommand('SelectAll');
-        document.execCommand('Copy', false, null);
-        documentJsonField.style.visibility = "hidden";
+      jsonStoreField.copyJsonToClipboard();
     }
 
 

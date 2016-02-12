@@ -1,5 +1,4 @@
 var sendCommand = function sendCommand(commandName, responseHandler) {
-        console.log("sending command from popup.js - " + commandName);
         (function (commandName, responseHandler) {
             chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
               console.assert(tabs.length == 1);
