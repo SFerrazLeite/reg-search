@@ -2,7 +2,7 @@
 <html>
   <head>
     <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <link rel="stylesheet" href="./materialize.min.css">
     <style>
       .container {
         display: flex;
@@ -35,30 +35,24 @@
       }
 
       .btn {
-        flex-grow: 1;
-        margin: 5px;
-        background-color: rgb(38,166,154);
-        border: none;
-        box-shadow: rgba(0, 0, 0, 0.156863) 0px 2px 5px 0px, rgba(0, 0, 0, 0.117647) 0px 2px 10px 0px 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
-        box-sizing: border-box;
-        cursor: pointer;
-        display: block;
-        height: 36px;
-        padding-left: 28px;
-        padding-right: 28px;
-        text-align: center;
-      }
-      .button:hover {
-        cursor: pointer;
-      }
-      .button:active {
-        position:relative;
-        top:1px;
-      }
-      .button:disabled {
-        cursor: default;
-        top:0px;
-      }
+          display: block;
+          height: 36px;
+          letter-spacing: 0.5px;
+          min-height: auto;
+          min-width: auto;
+          text-transform: uppercase;
+          vertical-align: middle;
+          width: 89.7969px;
+          perspective-origin: 44.8906px 18px;
+          transform-origin: 44.8906px 18px;
+          flex: 1 1 auto;
+          margin: 5px;
+          padding: 0px 28px;
+        }
+
+        .btn:active:enabled {
+            -webkit-box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.45);
+        }
 
       #chrome-store-warning {
         color: red;
@@ -70,17 +64,15 @@
     <div>
     <input type="text" id="query" autofocus>
     <div style="text-align: center" class="container">
-      <button class="btn" id="prev">Prev</button>
-      <button class="btn" id="next">Next</button>
-      <button class="btn" id="copy">Copy</button>
+      <button class="waves-effect waves-light btn" id="prev">Prev</button>
+      <button class="waves-effect waves-light btn" id="next">Next</button>
+      <button class="waves-effect waves-light btn" id="copy">Copy</button>
     </div>
     <br>
     <label>Case Insensitive <input type="checkbox" id="case-insensitive"></label>
 
     <p id="chrome-store-warning">It looks like you're trying to use this extension on the Chrome store, but Google doesn't allow this. See <a target="_blank" href="https://stackoverflow.com/questions/11613371/chrome-extension-content-script-on-https-chrome-google-com-webstore">this link</a> for more details. If you believe you've received this message in error, please contact the developer.</p>
     <script src="popup.js"></script>
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
     </div>
   </body>
 </html>
