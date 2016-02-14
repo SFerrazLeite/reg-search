@@ -223,9 +223,29 @@ var Popup;
 
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if(request.resultsCount !== undefined) {
-            if(request.resultsCount > 0) {
+            if(request.resultsCount > 1) {
+                if(request.position != null) {
+                    if(request.position == 0) {
+                        nextButton.disabled = false;
+                        prevButton.disabled = true;
+                    } else if(request.position + 1 == request.resultsCount) {
+                        nextButton.disabled = true;
+                        prevButton.disabled = false;
+                        prevButton.focus();
+                    } else {
+                        nextButton.disabled = false;
+                        prevButton.disabled = false;
+                    }
+                } else {
+                    nextButton.disabled = false;
+                    nextButton.focus();
+                    prevButton.disabled = false;
+                }
                 copyButton.disabled = false;
-                nextButton.disabled = false;
+            } else if(request.resultsCount == 1) {  
+                copyButton.disabled = false;
+                nextButton.disabled = true;
+                prevButton.disabled = true;
             } else {
                 copyButton.disabled = true;
                 nextButton.disabled = true;

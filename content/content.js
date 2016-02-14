@@ -121,7 +121,7 @@ var Content;
         chrome.runtime.sendMessage({
             from: "content",
             resultsCount: marks.length,
-            position: null;
+            position: null
         });
 
         displayCount();
@@ -238,7 +238,7 @@ var Content;
         chrome.runtime.sendMessage({
             from: "content",
             resultsCount: marks.length,
-            position: cur;
+            position: cur
         });
     }
 
@@ -251,7 +251,7 @@ var Content;
         chrome.runtime.sendMessage({
             from: "content",
             resultsCount: marks.length,
-            position: cur;
+            position: cur
         });
     }
 
