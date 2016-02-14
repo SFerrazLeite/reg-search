@@ -69,19 +69,21 @@ var Popup;
       addListeners(id, tabStates);
       restoreState(id, tabStates);
 
-      setNextButtonState();
+      setNextButtonState(id, tabStates);
       setPrevButtonState(id, tabStates);
+      setCopyButtonState(id, tabStates);
+      console.log(JSON.stringify(tabStates));
 
       if (tab.url.indexOf(chromeStoreURL) == 0) {
           document.getElementById("chrome-store-warning").style.display = "block";
       }
     });
 
-    function setNextButtonState() {
-        if (queryInput.value == "") {
-            nextButton.disabled = true;
-        } else {
+    function setNextButtonState(tabId, tabStates) {
+        if (tabStates.isSearching(tabId)) {
             nextButton.disabled = false;
+        } else {
+            nextButton.disabled = true;
         }
     }
 
@@ -93,9 +95,22 @@ var Popup;
         }
     }
 
+    function setCopyButtonState(tabId, tabStates) {
+      console.log("Setting copy button state with tabStates = " + JSON.stringify(tabStates));
+      if (tabStates.isSearching(tabId)) {
+          copyButton.disabled = false;
+      } else {
+          copyButton.disabled = true;
+      }
+    }
+
     function addListeners(id, tabStates) {
         var prevButtonClick = function () {
-            sendCommand("prev");
+            if (tabStates.isSearching(id)) {
+                sendCommand("prev");
+            } else {
+                search(id, tabStates);
+            }
         };
 
         var nextButtonClick = function () {
@@ -107,18 +122,14 @@ var Popup;
         };
 
         var copyButtonClick = function () {
+          if (tabStates.isSearching(id)) {
             sendCommand("copy");
+          }
         };
 
         var queryInputKeyDown = function (event) {
             if (event.keyCode == 13) {
-                if (tabStates.isSearching(id)) {
-                    if (event.shiftKey) {
-                        prevButtonClick();
-                    } else {
-                        nextButtonClick();
-                    }
-                } else {
+                if (!(tabStates.isSearching(id))) {
                     search(id, tabStates);
                 }
             } else if (event.keyCode == 27) {
@@ -181,6 +192,8 @@ var Popup;
     function setSearching(tabId, val, tabStates) {
         tabStates.set(tabId, "searching", val);
         setPrevButtonState(tabId, tabStates);
+        setNextButtonState(tabId, tabStates);
+        setCopyButtonState(tabId, tabStates);
     }
 
     function validate(regexp) {
