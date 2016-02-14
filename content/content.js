@@ -32,13 +32,23 @@ var Content;
         function InfoSpan() {
             var _this = this;
             this.span = document.createElement('span');
+            
+            // to move to the class name __regexp_search_count ...when i sober up
+            this.span.style.fontFamily = "Helvetica, sans-serif";
+            this.span.style.fontSize = "13px";
+            this.span.style.cursor = "pointer";
+
             this.span.className = "__regexp_search_count";
 
             this.span.addEventListener('mouseover', function (event) {
-                _this.span.style.opacity = "0";
+                // _this.span.style.opacity = "0";
+                _this.span.style.right = "0";
+                _this.span.style.left = "initial";
             });
             this.span.addEventListener('mouseout', function (event) {
-                _this.span.style.opacity = "1";
+                // _this.span.style.opacity = "1";
+                _this.span.style.right = "initial";
+                _this.span.style.left = "0";
             });
         }
         InfoSpan.prototype.setText = function (text) {
@@ -107,6 +117,12 @@ var Content;
         html.normalize();
 
         recurse(html, re);
+
+        chrome.runtime.sendMessage({
+            from: "content",
+            resultsCount: marks.length,
+            position: null;
+        });
 
         displayCount();
         if (marks.length > 0) {
@@ -218,6 +234,12 @@ var Content;
     function nextMatch() {
         cur++;
         cur %= marks.length;
+
+        chrome.runtime.sendMessage({
+            from: "content",
+            resultsCount: marks.length,
+            position: cur;
+        });
     }
 
     function prevMatch() {
@@ -225,6 +247,12 @@ var Content;
         if (cur < 0) {
             cur += marks.length;
         }
+
+        chrome.runtime.sendMessage({
+            from: "content",
+            resultsCount: marks.length,
+            position: cur;
+        });
     }
 
 

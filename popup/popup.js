@@ -80,16 +80,24 @@ var Popup;
     });
 
     function setNextButtonState(tabId, tabStates) {
-        if (tabStates.isSearching(tabId)) {
-            nextButton.disabled = false;
+        if(tabStates !== undefined) {
+            if (tabStates.isSearching(tabId)) {
+                nextButton.disabled = false;
+            } else {
+                nextButton.disabled = true;
+            }
         } else {
             nextButton.disabled = true;
         }
     }
 
     function setPrevButtonState(tabId, tabStates) {
-        if (tabStates.isSearching(tabId)) {
-            prevButton.disabled = false;
+        if(tabStates !== undefined) {
+            if (tabStates.isSearching(tabId)) {
+                prevButton.disabled = false;
+            } else {
+                prevButton.disabled = true;
+            }
         } else {
             prevButton.disabled = true;
         }
@@ -97,8 +105,12 @@ var Popup;
 
     function setCopyButtonState(tabId, tabStates) {
       console.log("Setting copy button state with tabStates = " + JSON.stringify(tabStates));
-      if (tabStates.isSearching(tabId)) {
-          copyButton.disabled = false;
+      if(tabStates !== undefined) {
+          if (tabStates.isSearching(tabId)) {
+              copyButton.disabled = false;
+          } else {
+              copyButton.disabled = true;
+          }
       } else {
           copyButton.disabled = true;
       }
@@ -148,7 +160,9 @@ var Popup;
 
             queryInput.className = '';
 
-            setNextButtonState();
+            copyButton.disabled = true;
+            nextButton.disabled = true;
+            prevButton.disabled = true;
         };
 
         var checkboxClick = function () {
@@ -191,9 +205,9 @@ var Popup;
 
     function setSearching(tabId, val, tabStates) {
         tabStates.set(tabId, "searching", val);
-        setPrevButtonState(tabId, tabStates);
-        setNextButtonState(tabId, tabStates);
-        setCopyButtonState(tabId, tabStates);
+        // setPrevButtonState(tabId, tabStates);
+        // setNextButtonState(tabId, tabStates);
+        // setCopyButtonState(tabId, tabStates);
     }
 
     function validate(regexp) {
@@ -206,4 +220,19 @@ var Popup;
         }
         return false;
     }
+
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        if(request.resultsCount !== undefined) {
+            if(request.resultsCount > 0) {
+                copyButton.disabled = false;
+                nextButton.disabled = false;
+            } else {
+                copyButton.disabled = true;
+                nextButton.disabled = true;
+                prevButton.disabled = true;
+            }
+        }
+       console.log("i received something..")
+    });
+
 })(Popup || (Popup = {}));
