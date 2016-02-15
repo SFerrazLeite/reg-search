@@ -1,28 +1,90 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Regex Search Updated</title>
+    <link rel="stylesheet" href="../css/materialize.min.css">
+    <style>
+      html {
+        font-family: Helvetica, sans-serif;
+        font-size: 18px;
+      }
+      .top-bar {
+        height: 100px;
+      }
+    </style>
+    <title>Reg Search Installed</title>
   </head>
   <body>
-    <h1>Regex Search 1.8</h1>
-    <b>How to use:</b>
-    <ul>
-        <li>Type in a regex query and click Next to search. Clicking Next again will go to the next match. Modifying the search query will clear the current search. Note that this extension will not work on the Chrome store, so do not test it on any Chrome store pages.</li>
-    </ul>
-    <b>Notes:</b>
-    <ul>
-                <li>You can open the extension by typing Alt+Shift+F. You can go to the next and previous search results by hitting Enter and Shift+Enter, respectively. Esc clears results.</li>
-        <li>You can set the default case sensitivity on the <a href="options.html">options page</a></li>
-        <li>This extension uses the JavaScript regex engine. I create a regular expression using 'new RegExp(regexp, flags)', where flags are currently either 'g' or 'gi'.</li>
-        <li>This extension is open source and the code can be found <a href="https://github.com/gsingh93/regex-search">here</a>. I'd appreciate any help, whether it's adding new features, fixing bugs, or making the extension look better (including this page).</li>
-        <li>If you find any bugs, let me know <a href="https://github.com/gsingh93/regex-search/issues">here</a>.</li>
-        <li>If you like this extension, please review it in the <a href="https://chrome.google.com/webstore/detail/regex-search/bcdabfmndggphffkchfdcekcokmbnkjl/reviews">Chrome store</a></li>
-    </ul>
-    <b>Upcoming Features:</b>
-    <ul>
-        <li>Search history</li>
-        <li>List all matches</li>
-        <li>Whatever you guys suggest! Post your suggestions <a href="https://github.com/gsingh93/regex-search/issues">here</a>.
-    </ul>
+    <div class="container">
+      <div class="row center-align">
+        <div class="col s2 transparent top-bar" style="padding: 10px;">
+          <img src="../images/icon48.png" height="80px" />
+        </div>
+        <div class="col s8 teal lighten-3 z-depth-1 top-bar">
+          <h3 style="padding: 0px;">Reg Search 1.0</h3>
+        </div>
+        <div class="col s2 transparent"></div>
+      </div>
+      <div class="row">
+        <div class="col s12 transparent">
+          <div class="section">
+            <h5>Basic Use</h5>
+            <div class="divider"></div>
+            <p>
+              Open the plugin and type in a regex query. Hit Enter to search.
+              Use the Next and Prev buttons to iterate through your search
+              results. Hit the Copy button to copy the search results as JSON
+              array to the clip board. Modifying the search query will clear the
+              current search. Note that this extension will not work on the
+              Chrome store, so do not test it on any Chrome store pages.
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Short Cut</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Alt+Shift+F</td>
+                  <td>open search plug-in</td>
+                </tr>
+                <tr>
+                  <td>Alt+N</td>
+                  <td>cycle next result</td>
+                </tr>
+                <tr>
+                  <td>Alt+P</td>
+                  <td>cycle previous result</td>
+                </tr>
+                <tr>
+                  <td>Alt+C</td>
+                  <td>copy search results as JSON array to clip board</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="section">
+            <h5>Notes and Hints</h5>
+            <div class="divider"></div>
+            <p>
+              You can set the default case sensitivity on the <a href="options.html">options page</a>
+              This extension is open source and the code can be found <a href="https://github.com/SFerrazLeite/reg-search">on github</a>.
+              If you find any bugs or have suggestions for improvements, <a href="https://github.com/SFerrazLeite/reg-search/issues">let us know</a>.
+              This extension is published under the <a href="../LICENSE">MIT license</a>.
+            </p>
+          </div>
+          <div class="section">
+            <h5>Credits</h5>
+            <div class="divider"></div>
+            <p>
+              Credits to the open source project <a href ="https://github.com/gsingh93/regex-search">regex-search</a>
+              by gsingh93. We use the <a href="http://materializecss.com/">materialize</a> library published
+              under the MIT licence and copy-righted to materialize.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

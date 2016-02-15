@@ -11,32 +11,6 @@ var sendCommand = function sendCommand(commandName, responseHandler) {
         })(commandName, responseHandler);
     }
 
-var KeyboardHandler;
-(function (KeyboardHandler) {
-    var lastCalled = 0;
-
-    function init(tabStates) {
-        //Add listeners to keyboard input for shortcut operations
-        chrome.commands.onCommand.addListener(function (commandName) {
-            //Select tab with content to be parsed - and add callback function
-            chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
-                console.assert(tabs.length == 1);
-                var tab = tabs[0];
-                var id = tab.id;
-
-                var d = new Date();
-                if (tabStates.exists(id) && tabStates.get(id, "searching") && d.getTime() - lastCalled > 50) {
-                    if (commandName == "next" || commandName == "prev") {
-                      chrome.tabs.sendMessage(tab.id, { command: commandName }, null);
-                    }
-                    lastCalled = d.getTime();
-                }
-            });
-        });
-    }
-    KeyboardHandler.init = init;
-})(KeyboardHandler || (KeyboardHandler = {}));
-
 var BackgroundInterface;
 (function (BackgroundInterface) {
     function getTabStateManager() {
@@ -72,7 +46,6 @@ var Popup;
       setNextButtonState(id, tabStates);
       setPrevButtonState(id, tabStates);
       setCopyButtonState(id, tabStates);
-      console.log(JSON.stringify(tabStates));
 
       if (tab.url.indexOf(chromeStoreURL) == 0) {
           document.getElementById("chrome-store-warning").style.display = "block";
@@ -205,9 +178,6 @@ var Popup;
 
     function setSearching(tabId, val, tabStates) {
         tabStates.set(tabId, "searching", val);
-        // setPrevButtonState(tabId, tabStates);
-        // setNextButtonState(tabId, tabStates);
-        // setCopyButtonState(tabId, tabStates);
     }
 
     function validate(regexp) {
@@ -242,7 +212,7 @@ var Popup;
                     prevButton.disabled = false;
                 }
                 copyButton.disabled = false;
-            } else if(request.resultsCount == 1) {  
+            } else if(request.resultsCount == 1) {
                 copyButton.disabled = false;
                 nextButton.disabled = true;
                 prevButton.disabled = true;
