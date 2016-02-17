@@ -1,5 +1,9 @@
 chrome.runtime.onInstalled.addListener(function (object) {
+  var manifest = chrome.runtime.getManifest();
+  if(localStorage['version'] !== manifest.version){
+    localStorage['version'] = manifest.version;
     chrome.tabs.create({url: "../pages/install.html"}, null);
+  }
 });
 
 var TabStateManager = (function () {
