@@ -1,3 +1,5 @@
+var HISTORY_LENGTH = 10;
+
 var sendCommand = function sendCommand(commandName, responseHandler) {
         (function (commandName, responseHandler) {
             chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
@@ -19,6 +21,63 @@ var BackgroundInterface;
     BackgroundInterface.getTabStateManager = getTabStateManager;
 })(BackgroundInterface || (BackgroundInterface = {}));
 
+var SearchHistory = (function(){
+    function SearchHistory(){
+      var persistentHistory = JSON.parse(localStorage.getItem("searchHistory"));
+      if(persistentHistory === null){
+        this.history = [];
+        this.position = 0;
+      } else {
+        this.history = persistentHistory;
+        this.position = this.history.length - 1;
+      }
+      this.newQuery = false;
+    };
+
+    SearchHistory.prototype.push = function(query){
+      while(this.history.length >= HISTORY_LENGTH){
+        this.history.shift();
+      }
+      this.history.push(query);
+      this.position = this.history.length - 1;
+      this.newQuery = true;
+      localStorage.setItem("searchHistory", JSON.stringify(this.history));
+    };
+
+    SearchHistory.prototype.prev = function() {
+      if(this.newQuery){
+        return this.history[this.position];
+        this.newQuery = false;
+      }
+      if(this.history.length == 0){
+          return "";
+      }
+      if(this.position != 0) {
+        --this.position;
+      }
+      return this.history[this.position];
+    };
+
+    SearchHistory.prototype.next = function() {
+      if((this.history.length == 0) || (this.position >= this.history.length - 1)){
+          return "";
+          this.position = this.history.length;
+      }
+      ++this.position;
+      return this.history[this.position];
+    };
+
+    SearchHistory.prototype.getLast = function() {
+      if(this.history.length == 0) {
+        return "";
+      }
+      this.position = this.history.length - 1;
+      return this.history[this.position];
+    };
+
+    return SearchHistory;
+})();
+
 var Popup;
 (function (Popup) {
     var prevButton = document.getElementById("prev");
@@ -26,6 +85,7 @@ var Popup;
     var copyButton = document.getElementById("copy");
     var queryInput = document.getElementById("query");
     var caseInsensitiveCheckbox = document.getElementById("case-insensitive");
+    var searchHistory = new SearchHistory();
 
     var chromeStoreURL = "https://chrome.google.com/webstore/";
 
@@ -147,11 +207,24 @@ var Popup;
             }
         };
 
+        var searchHistoryKeyDown = function(event) {
+            if(document.activeElement === queryInput) {
+                if(event.keyCode == 38){
+                    queryInput.value = searchHistory.prev();
+                    event.preventDefault();
+                } else if(event.keyCode == 40) {
+                    queryInput.value = searchHistory.next();
+                    event.preventDefault();
+                }
+            }
+        }
+
         prevButton.addEventListener("click", prevButtonClick);
         nextButton.addEventListener("click", nextButtonClick);
         copyButton.addEventListener("click", copyButtonClick);
         queryInput.addEventListener("keydown", queryInputKeyDown);
         queryInput.addEventListener("input", queryInputInput);
+        document.addEventListener("keydown", searchHistoryKeyDown);
         caseInsensitiveCheckbox.onclick = checkboxClick;
     }
 
@@ -162,6 +235,7 @@ var Popup;
 
     function search(tabId, tabStates) {
         if (validate(queryInput.value)) {
+            searchHistory.push(queryInput.value);
             queryInput.className = '';
             var insensitive = caseInsensitiveCheckbox.checked;
 
@@ -240,7 +314,7 @@ var Popup;
         } else {
             copyButton.disabled = true;
             nextButton.disabled = true;
-            prevButton.disabled = true;            
+            prevButton.disabled = true;
         }
        console.log("i received something..")
     });
