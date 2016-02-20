@@ -38,16 +38,22 @@ var SearchHistory = (function(){
       while(this.history.length >= HISTORY_LENGTH){
         this.history.shift();
       }
-      this.history.push(query);
+      console.log("current history" + JSON.stringify(this.history));
+      if(query != this.history[this.history.length - 1]) {
+        this.history.push(query);
+      }
+      console.log("new history" + JSON.stringify(this.history));
       this.position = this.history.length - 1;
       this.newQuery = true;
       localStorage.setItem("searchHistory", JSON.stringify(this.history));
     };
 
     SearchHistory.prototype.prev = function() {
+        console.log("prev was requested");
       if(this.newQuery){
-        return this.history[this.position];
         this.newQuery = false;
+        --this.position;
+        return this.history[this.position];
       }
       if(this.history.length == 0){
           return "";
@@ -59,6 +65,7 @@ var SearchHistory = (function(){
     };
 
     SearchHistory.prototype.next = function() {
+        console.log("next was requested")
       if((this.history.length == 0) || (this.position >= this.history.length - 1)){
           return "";
           this.position = this.history.length;
@@ -173,14 +180,16 @@ var Popup;
         };
 
         var queryInputKeyDown = function (event) {
-            if (event.keyCode == 13) {
-                if (!(tabStates.isSearching(id))) {
-                    search(id, tabStates);
-                }
-            } else if (event.keyCode == 27) {
-                setSearching(id, false, tabStates);
-                sendCommand("clear");
-            }
+            // if (event.keyCode == 13) {
+            //     console.log("enter/search field");
+            //     if (!(tabStates.isSearching(id))) {
+            //         search(id, tabStates);
+            //     }
+            // } else if (event.keyCode == 27) {
+            //     console.log("clear field");
+            //     setSearching(id, false, tabStates);
+            //     sendCommand("clear");
+            // }
         };
 
         var queryInputInput = function () {
@@ -210,11 +219,22 @@ var Popup;
         var searchHistoryKeyDown = function(event) {
             if(document.activeElement === queryInput) {
                 if(event.keyCode == 38){
+                    console.log("up");
                     queryInput.value = searchHistory.prev();
                     event.preventDefault();
                 } else if(event.keyCode == 40) {
+                    console.log("down");
                     queryInput.value = searchHistory.next();
                     event.preventDefault();
+                } else if (event.keyCode == 13) {
+                    // if (!(tabStates.isSearching(id))) {
+                    console.log("enter/search");
+                    search(id, tabStates);
+                    // }
+                } else if (event.keyCode == 27) {
+                    console.log("clear");
+                    setSearching(id, false, tabStates);
+                    sendCommand("clear");
                 }
             }
         }
@@ -238,6 +258,8 @@ var Popup;
             searchHistory.push(queryInput.value);
             queryInput.className = '';
             var insensitive = caseInsensitiveCheckbox.checked;
+
+            console.log("sending search term " + queryInput.value);
 
             chrome.tabs.sendMessage(tabId, {
                 command: "search",
