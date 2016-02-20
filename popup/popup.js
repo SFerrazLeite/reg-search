@@ -192,6 +192,22 @@ var Popup;
     }
 
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        if(request.searchTerm !== undefined) {
+            console.log("reached the search party")
+            console.log("request.searchTerm " + request.searchTerm);
+
+            var varTmp = localStorage.getItem("searchTerms");
+            if(varTmp !== null) {
+                searchTermsList = JSON.parse(varTmp);
+                searchTermsList.push(request.searchTerm);
+                localStorage.setItem("searchTerms", JSON.stringify(searchTermsList));
+            } else  {
+                var result = [];
+                result.push(request.searchTerm);
+                localStorage.setItem("searchTerms", JSON.stringify(result));
+            }
+        }
+
         if(request.resultsCount !== undefined) {
             if(request.resultsCount > 1) {
                 if(request.position != null) {
@@ -221,6 +237,10 @@ var Popup;
                 nextButton.disabled = true;
                 prevButton.disabled = true;
             }
+        } else {
+            copyButton.disabled = true;
+            nextButton.disabled = true;
+            prevButton.disabled = true;            
         }
        console.log("i received something..")
     });

@@ -3,6 +3,7 @@ var Content;
     var jsonMatches = [];
     var marks = [];
     var cur = 0;
+    var searchRegex;
 
     chrome.runtime.sendMessage({ event: "loaded" });
 
@@ -11,7 +12,6 @@ var Content;
         this.jsonField = document.createElement('textarea');
         this.jsonField.style.display = "none";
         document.getElementsByTagName('body')[0].appendChild(this.jsonField);
-
       }
 
       JsonStoreField.prototype.setJson = function(text) {
@@ -88,6 +88,7 @@ var Content;
             infoSpan.add();
             infoSpan.setText("Searching...");
             var re = new RegExp(request.regexp, flags);
+            searchRegex = request.regexp;
 
             makeTimeoutCall(function (re) {
                 delayedSearch(re);
@@ -121,8 +122,11 @@ var Content;
         chrome.runtime.sendMessage({
             from: "content",
             resultsCount: marks.length,
-            position: null
+            position: null,
+            searchTerm: searchRegex
         });
+
+        console.log("i searched for " + searchRegex);
 
         displayCount();
         if (marks.length > 0) {
@@ -201,6 +205,12 @@ var Content;
             marks.length = 0;
             infoSpan.remove();
         }, 10);
+
+        chrome.runtime.sendMessage({
+            from: "content",
+            resultsCount: null,
+            position: null
+        });
     }
 
     function displayCount() {
