@@ -16,7 +16,9 @@ var sendCommand = function sendCommand(commandName, responseHandler) {
 var BackgroundInterface;
 (function (BackgroundInterface) {
     function getTabStateManager() {
-        return chrome.extension.getBackgroundPage()["BackgroundScript"].getTabStateManager();
+        if(chrome.extension.getBackgroundPage() !== null) {
+            return chrome.extension.getBackgroundPage()["BackgroundScript"].getTabStateManager();
+        }
     }
     BackgroundInterface.getTabStateManager = getTabStateManager;
 })(BackgroundInterface || (BackgroundInterface = {}));
@@ -29,7 +31,7 @@ var SearchHistory = (function(){
         this.position = 0;
       } else {
         this.history = persistentHistory;
-        this.position = this.history.length - 1;
+        this.position = this.history.length;
       }
       this.newQuery = false;
     };
@@ -38,18 +40,23 @@ var SearchHistory = (function(){
       while(this.history.length >= HISTORY_LENGTH){
         this.history.shift();
       }
-      console.log("current history" + JSON.stringify(this.history));
-      if(query != this.history[this.history.length - 1]) {
+      var addTheElement = true;
+      for(h = 0; h < this.history.length; h++) {
+        if(query == this.history[h]) {
+            addTheElement = false;
+            break;
+        }
+      }
+      if(addTheElement) {
         this.history.push(query);
       }
-      console.log("new history" + JSON.stringify(this.history));
+
       this.position = this.history.length - 1;
       this.newQuery = true;
       localStorage.setItem("searchHistory", JSON.stringify(this.history));
     };
 
     SearchHistory.prototype.prev = function() {
-        console.log("prev was requested");
       if(this.newQuery){
         this.newQuery = false;
         --this.position;
@@ -65,10 +72,9 @@ var SearchHistory = (function(){
     };
 
     SearchHistory.prototype.next = function() {
-        console.log("next was requested")
       if((this.history.length == 0) || (this.position >= this.history.length - 1)){
-          return "";
           this.position = this.history.length;
+          return "";
       }
       ++this.position;
       return this.history[this.position];
@@ -102,9 +108,11 @@ var Popup;
       var id = tab.id;
       var tabStates = BackgroundInterface.getTabStateManager();
 
-      if (!tabStates.exists(id)) {
-          tabStates.resetState(id);
-          var tabState = tabStates.get(id);
+      if(tabStates !== null && tabStates.exists() !== undefined) {
+          if (!tabStates.exists(id)) {
+              tabStates.resetState(id);
+              var tabState = tabStates.get(id);
+          }
       }
 
       addListeners(id, tabStates);
